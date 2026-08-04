@@ -30,6 +30,25 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
+# --- Bootstrap: expand compressed core or fail clearly ---
+def _ensure_core():
+    import subprocess
+    core = ROOT / "forge_cognitive_core.py"
+    if core.exists() and core.stat().st_size > 1000:
+        return
+    expander = ROOT / "expand_core.py"
+    if expander.exists():
+        subprocess.check_call([sys.executable, str(expander)])
+        if core.exists() and core.stat().st_size > 1000:
+            return
+    raise SystemExit(
+        "ERROR: forge_cognitive_core.py missing.\n"
+        "Run: python expand_core.py\n"
+        "Or copy forge_cognitive_core.py from FORGE_COMPLETE_v3.zip into this directory."
+    )
+
+_ensure_core()
+
 def cmd_status() -> None:
     from forge_cognitive_core import Forge, PROTOCOL, FORGE_VERSION, asdict
     forge = Forge()
