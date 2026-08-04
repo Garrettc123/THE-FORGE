@@ -1,0 +1,133 @@
+# THE FORGE + Garcar — Unified GitHub Actions Workflow
+# Place at: .github/workflows/forge_master_workflow.yml
+# on systems-master-hub (or the repo that holds the Forge scripts).
+
+name: FORGE Cognitive Control
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+    - cron: "0 7 * * *"
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run mode"
+        required: true
+        default: "bridge"
+        type: choice
+        options:
+          - bridge
+          - cycle
+          - status
+          - garcar-full
+          - tower
+      live:
+        description: "Live mode (capital can move / mutating APIs)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  actions: write
+  issues: read
+
+jobs:
+  forge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve mode
+        id: params
+        run: |
+          MODE="${{ github.event.inputs.mode || 'bridge' }}"
+          LIVE="${{ github.event.inputs.live || 'false' }}"
+
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            HOUR=$(date -u +%H)
+            if [ "$HOUR" = "00" ]; then
+              MODE="bridge"
+              LIVE="false"
+            elif [ "$HOUR" = "07" ]; then
+              MODE="tower"
+              LIVE="false"
+            else
+              MODE="status"
+              LIVE="false"
+            fi
+          fi
+
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+          echo "live=$LIVE" >> $GITHUB_OUTPUT
+          echo "Resolved mode=$MODE live=$LIVE"
+
+      - name: Inject secrets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          GITHUB_ORG: ${{ secrets.GITHUB_ORG }}
+        run: |
+          echo "GITHUB_TOKEN=${GITHUB_TOKEN}" >> $GITHUB_ENV
+          echo "STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}" >> $GITHUB_ENV
+          echo "LINEAR_API_KEY=${LINEAR_API_KEY}" >> $GITHUB_ENV
+          echo "NOTION_TOKEN=${NOTION_TOKEN}" >> $GITHUB_ENV
+          echo "NOTION_DATABASE_ID=${NOTION_DATABASE_ID}" >> $GITHUB_ENV
+          echo "SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}" >> $GITHUB_ENV
+          echo "GITHUB_ORG=${GITHUB_ORG}" >> $GITHUB_ENV
+
+      - name: Run FORGE / Garcar
+        run: |
+          MODE="${{ steps.params.outputs.mode }}"
+          LIVE="${{ steps.params.outputs.live }}"
+          LIVE_FLAG=""
+          if [ "$LIVE" = "true" ]; then
+            LIVE_FLAG="--live"
+          fi
+
+          case "$MODE" in
+            bridge)
+              python forge_all.py bridge $LIVE_FLAG
+              ;;
+            cycle)
+              python forge_all.py cycle $LIVE_FLAG
+              ;;
+            status)
+              python forge_all.py status
+              ;;
+            garcar-full)
+              python forge_all.py garcar full $LIVE_FLAG
+              ;;
+            tower)
+              python forge_all.py tower
+              ;;
+            *)
+              python forge_all.py bridge
+              ;;
+          esac
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-run-${{ github.run_id }}
+          path: |
+            forge_run_output.json
+            forge_state_snapshot.json
+            forge_garcar_bridge_output.json
+            garcar_run_output.json
+          retention-days: 30
+          if-no-files-found: ignore
