@@ -20,7 +20,7 @@ on:
           - garcar-full
           - tower
       live:
-        description: "Live mode"
+        description: "Live mode (capital can move / mutating APIs)"
         required: false
         default: false
         type: boolean
@@ -34,11 +34,26 @@ jobs:
   forge:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Expand cognitive core if needed
+        run: |
+          python expand_core.py || true
+          if [ ! -f forge_cognitive_core.py ]; then
+            echo "ERROR: forge_cognitive_core.py missing after expand"
+            ls -la
+            exit 1
+          fi
+          python -c "from forge_cognitive_core import Forge; print('core OK')"
+
       - name: Resolve mode
         id: params
         run: |
@@ -52,6 +67,7 @@ jobs:
           fi
           echo "mode=$MODE" >> $GITHUB_OUTPUT
           echo "live=$LIVE" >> $GITHUB_OUTPUT
+
       - name: Inject secrets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -69,6 +85,7 @@ jobs:
           echo "NOTION_DATABASE_ID=${NOTION_DATABASE_ID}" >> $GITHUB_ENV
           echo "SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}" >> $GITHUB_ENV
           echo "GITHUB_ORG=${GITHUB_ORG}" >> $GITHUB_ENV
+
       - name: Run FORGE / Garcar
         run: |
           MODE="${{ steps.params.outputs.mode }}"
@@ -83,6 +100,7 @@ jobs:
             tower) python forge_all.py tower ;;
             *) python forge_all.py bridge ;;
           esac
+
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
