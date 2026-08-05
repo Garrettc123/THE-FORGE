@@ -1,0 +1,28 @@
+{
+  "cycle": 1,
+  "timestamp": "2026-08-05T21:20:11.485157+00:00",
+  "mode": "dry-run",
+  "event_count": 0,
+  "priority_queue": [],
+  "external_signals_received": 0,
+  "horizon_scorecards": [],
+  "phases": {
+    "learning": {
+      "causal_updates": [],
+      "open_experiments": 0,
+      "closed_experiments": 0
+    },
+    "outcome": {}
+  },
+  "control_tower": "[FORGE STUB] Inert core loaded. No cognitive work performed. Replace forge_cognitive_core.py with the real module.",
+  "protocol": "FORGE v3 (stub)",
+  "forge_version": "0.0.0-stub",
+  "garcar_feed": {
+    "source": "none",
+    "signal_count": 0,
+    "github_summary": null,
+    "stripe": null,
+    "linear_p1": null
+  },
+  "bridge_mode": "cycle"
+}
