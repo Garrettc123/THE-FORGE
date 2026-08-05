@@ -1,0 +1,40 @@
+{
+  "cycle": 1,
+  "timestamp": "2026-08-05T16:53:24Z",
+  "dry_run": true,
+  "event_count": 0,
+  "priority_queue": [],
+  "control_tower": "[FORGE CONTROL TOWER] cycle=1 mode=DRY-RUN signals=0 cash=$500,000 mrr=$100,000",
+  "phases": {
+    "perception": {
+      "signals_seen": 0
+    },
+    "prediction": {
+      "scenarios_considered": 1
+    },
+    "decision": {
+      "selected_actions": []
+    },
+    "action": {
+      "executed": []
+    },
+    "outcome": {
+      "status": "simulated"
+    },
+    "learning": {
+      "causal_updates": [],
+      "open_experiments": 0,
+      "closed_experiments": 0
+    }
+  },
+  "garcar_feed": {
+    "source": "none",
+    "signal_count": 0,
+    "github_summary": null,
+    "stripe": null,
+    "linear_p1": null
+  },
+  "protocol": "FORGE-COGNITIVE-CONTROL-v3",
+  "forge_version": "3.0",
+  "bridge_mode": "cycle"
+}

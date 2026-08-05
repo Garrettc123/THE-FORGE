@@ -1,0 +1,25 @@
+{
+  "protocol": "FORGE-COGNITIVE-CONTROL-v3",
+  "forge_version": "3.0",
+  "cycle_count": 1,
+  "state": {
+    "cash": 500000.0,
+    "mrr": 100000.0,
+    "revenue": 1200000.0,
+    "profit": 40000.0,
+    "customers": 420,
+    "churn": 0.03,
+    "cac": 1200.0,
+    "assets": 250000.0,
+    "risk_score": 0.42,
+    "capacity": 0.7,
+    "infrastructure": 0.85,
+    "productivity": 1.1
+  },
+  "replication_gate": {
+    "enabled": false,
+    "reason": "dry-run safe mode",
+    "last_review": "2026-08-05T16:53:24Z"
+  },
+  "generated_at": "2026-08-05T16:53:24Z"
+}
