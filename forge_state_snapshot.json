@@ -19,7 +19,7 @@
   "replication_gate": {
     "enabled": false,
     "reason": "dry-run safe mode",
-    "last_review": "2026-08-05T16:53:24Z"
+    "last_review": "2026-08-05T19:27:46Z"
   },
-  "generated_at": "2026-08-05T16:53:24Z"
+  "generated_at": "2026-08-05T19:27:46Z"
 }
