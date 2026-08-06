@@ -1,5 +1,10 @@
 __pycache__/
 *.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
 forge_run_output.json
 forge_state_snapshot.json
 forge_garcar_bridge_output.json
