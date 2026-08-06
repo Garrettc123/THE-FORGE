@@ -56,6 +56,12 @@ Drop `forge_master_workflow.yml` into `.github/workflows/` (already present).
 
 Schedule: every 15 min (status) · 07:00 UTC (tower) · midnight (bridge).
 
+## Sibling systems
+
+- [`systems/forge_agents/`](systems/forge_agents/) — dependency-light multi-agent
+  orchestrator (planner → researcher → coder → critic) with CLI and optional REST API.
+  Independent of the FORGE v3 modules above; can be extracted to its own repo.
+
 ## Value Function
 
 ```
