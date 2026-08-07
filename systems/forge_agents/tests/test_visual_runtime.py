@@ -17,7 +17,7 @@ def test_replay_frames_follow_step_count():
     result = Orchestrator(provider=EchoProvider()).run("Produce one sentence")
     frames = PS2AgentRuntimeView.replay_frames(result)
     assert len(frames) == result.step_count + 1
-    assert "[running]" in frames[0]
+    assert ">> planner" in frames[0]
     assert "STOP: APPROVED" in frames[-1]
 
 
