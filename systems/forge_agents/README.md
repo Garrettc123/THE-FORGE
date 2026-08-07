@@ -48,6 +48,15 @@ print(result.final_answer)
 print(result.transcript)
 ```
 
+## PS2-style runtime view (running agents)
+
+Render a PlayStation-2-inspired HUD for agent execution:
+
+```bash
+python -m forge_agents.cli run "Draft launch checklist" --ps2-view
+python -m forge_agents.cli run "Draft launch checklist" --ps2-view --ps2-replay
+```
+
 ## Layout
 
 ```
